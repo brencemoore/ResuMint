@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resumint</title>
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/styles/app.css">
+</head>
+<body class="bg-light text-dark">
+  <a class="visually-hidden-focusable position-absolute top-0 start-0 bg-white text-dark p-3" href="#mainContent">Skip to resume editor</a>
+
+  <header class="bg-white border-bottom">
+    <div class="container-fluid py-3">
+      <h1 class="h3 mb-1">Resumint</h1>
+      <p class="mb-0 text-secondary">Local resume builder with structured editing, Groq polishing, and PDF export.</p>
+    </div>
+  </header>
+
+  <div class="container-fluid py-4">
+    <div class="row g-4">
+      <aside class="col-12 col-lg-3" aria-label="Saved resumes">
+        <section class="bg-white border rounded p-3">
+          <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+            <h2 class="h5 mb-0">Saved Resumes</h2>
+            <button class="btn btn-sm btn-outline-primary" type="button" id="newResumeButton">New</button>
+          </div>
+
+          <form id="searchForm" class="mb-3" role="search">
+            <label class="form-label" for="searchInput">Search resumes</label>
+            <div class="input-group">
+              <input class="form-control" id="searchInput" name="searchInput" type="search" aria-label="Search resumes by name">
+              <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </div>
+          </form>
+
+          <div id="resumeListStatus" class="small text-secondary mb-2" role="status" aria-live="polite"></div>
+          <div class="list-group" id="resumeList" aria-label="Resume list"></div>
+        </section>
+      </aside>
+
+      <main class="col-12 col-lg-9" id="mainContent">
+        <section class="bg-white border rounded p-3 p-md-4" aria-labelledby="editorHeading">
+          <div class="d-flex flex-column flex-xl-row justify-content-between gap-3 mb-4">
+            <div>
+              <h2 class="h4 mb-1" id="editorHeading">Resume Editor</h2>
+              <p class="mb-0 text-secondary" id="currentResumeStatus" role="status" aria-live="polite">Creating a new resume.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn btn-primary" type="button" id="saveResumeButton">Save Resume</button>
+              <button class="btn btn-success" type="button" id="generateResumeButton">Generate Resume</button>
+              <button class="btn btn-outline-dark" type="button" id="exportPdfButton">Export PDF</button>
+            </div>
+          </div>
+
+          <form id="resumeForm">
+            <fieldset class="border rounded p-3 mb-4">
+              <legend class="float-none w-auto px-2 h6">Resume Details</legend>
+              <div class="row g-3">
+                <div class="col-12 col-md-4">
+                  <label class="form-label" for="resumeNameInput">Resume name</label>
+                  <input class="form-control" id="resumeNameInput" name="resumeNameInput" type="text" required aria-required="true">
+                </div>
+                <div class="col-12 col-md-4">
+                  <label class="form-label" for="jobTitleInput">Target job title</label>
+                  <input class="form-control" id="jobTitleInput" name="jobTitleInput" type="text" aria-label="Target job title">
+                </div>
+                <div class="col-12 col-md-4">
+                  <label class="form-label" for="companyTargetInput">Target company</label>
+                  <input class="form-control" id="companyTargetInput" name="companyTargetInput" type="text" aria-label="Target company">
+                </div>
+              </div>
+            </fieldset>
+
+            <ul class="nav nav-tabs" id="editorTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="basicsTab" data-tab-target="basicsPanel" type="button" role="tab" aria-controls="basicsPanel" aria-selected="true">Basics</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="educationTab" data-tab-target="educationPanel" type="button" role="tab" aria-controls="educationPanel" aria-selected="false">Education</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="experienceTab" data-tab-target="experiencePanel" type="button" role="tab" aria-controls="experiencePanel" aria-selected="false">Experience</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="projectsTab" data-tab-target="projectsPanel" type="button" role="tab" aria-controls="projectsPanel" aria-selected="false">Projects</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="skillsTab" data-tab-target="skillsPanel" type="button" role="tab" aria-controls="skillsPanel" aria-selected="false">Skills</button>
+              </li>
+            </ul>
+
+            <div class="border border-top-0 rounded-bottom p-3">
+              <section id="basicsPanel" role="tabpanel" aria-labelledby="basicsTab">
+                <fieldset>
+                  <legend class="h5">Basics</legend>
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <label class="form-label" for="basicNameInput">Full name</label>
+                      <input class="form-control" id="basicNameInput" name="basicNameInput" type="text" aria-label="Full name">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label" for="emailInput">Email</label>
+                      <input class="form-control" id="emailInput" name="emailInput" type="email" aria-label="Email address">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label" for="phoneInput">Phone</label>
+                      <input class="form-control" id="phoneInput" name="phoneInput" type="tel" aria-label="Phone number">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label" for="locationInput">Location</label>
+                      <input class="form-control" id="locationInput" name="locationInput" type="text" aria-label="Location">
+                    </div>
+                  </div>
+                </fieldset>
+              </section>
+
+              <section class="d-none" id="educationPanel" role="tabpanel" aria-labelledby="educationTab" hidden>
+                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                  <h3 class="h5 mb-0">Education</h3>
+                  <button class="btn btn-outline-primary btn-sm" type="button" id="addEducationButton">Add Education</button>
+                </div>
+                <div id="educationContainer"></div>
+              </section>
+
+              <section class="d-none" id="experiencePanel" role="tabpanel" aria-labelledby="experienceTab" hidden>
+                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                  <h3 class="h5 mb-0">Experience</h3>
+                  <button class="btn btn-outline-primary btn-sm" type="button" id="addExperienceButton">Add Experience</button>
+                </div>
+                <div id="experienceContainer"></div>
+              </section>
+
+              <section class="d-none" id="projectsPanel" role="tabpanel" aria-labelledby="projectsTab" hidden>
+                <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                  <h3 class="h5 mb-0">Projects</h3>
+                  <button class="btn btn-outline-primary btn-sm" type="button" id="addProjectButton">Add Project</button>
+                </div>
+                <div id="projectsContainer"></div>
+              </section>
+
+              <section class="d-none" id="skillsPanel" role="tabpanel" aria-labelledby="skillsTab" hidden>
+                <fieldset>
+                  <legend class="h5">Skills and Certifications</legend>
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <label class="form-label" for="skillsInput">Skills, separated by commas</label>
+                      <textarea class="form-control" id="skillsInput" name="skillsInput" rows="4" aria-label="Skills separated by commas"></textarea>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label" for="certificationsInput">Certifications, separated by commas</label>
+                      <textarea class="form-control" id="certificationsInput" name="certificationsInput" rows="3" aria-label="Certifications separated by commas"></textarea>
+                    </div>
+                  </div>
+                </fieldset>
+              </section>
+            </div>
+          </form>
+
+          <section class="mt-4" aria-labelledby="messageHeading">
+            <h2 class="h5" id="messageHeading">Application Messages</h2>
+            <div class="alert alert-secondary mb-0" id="messageBox" role="status" aria-live="polite">Ready.</div>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/scripts/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "resumint",
+  "version": "1.0.0",
+  "description": "A locally hosted accessible resume builder that stores resumes in SQLite and uses Groq to polish resume content.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "resume",
+    "builder",
+    "sqlite",
+    "groq",
+    "accessibility"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "puppeteer": "^23.10.4",
+    "sqlite3": "^5.1.7"
+  }
+}
