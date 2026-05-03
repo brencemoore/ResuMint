@@ -354,6 +354,11 @@ Generate the full implementation step-by-step, starting with:
 Ensure each step builds on the previous one and results in a working application.
 ```
 
+**Prompt 2:**
+```
+There is something incorrect with exporting the resumes as a pdf. Can you reverify that this works, or show me the file that needs to be changed. Also create a new .md file in the root directory that explains the structure of the project, and what each file does, mainly the .js files so that I can maintain this on my own.
+```
+
 ## Codex Prompt Summaries
 
 **Prompt 1 Summary:**
@@ -364,3 +369,8 @@ Ensure each step builds on the previous one and results in a working application
   - Added environment configuration files, `.gitignore`, package metadata, and README setup documentation.
   - Removed an exposed API key string from this documentation file so credentials belong only in the ignored local `.env` file.
 
+
+**Prompt 2 Summary:**
+  - Reviewed the PDF export flow and fixed the likely binary response problem by converting Puppeteer's PDF bytes to a Node `Buffer` in `src/backend/services/pdfService.js`.
+  - Updated the frontend PDF download cleanup in `src/frontend/scripts/app.js` so the temporary browser URL is revoked after the download has time to start.
+  - Added `PROJECT_STRUCTURE.md` in the root directory to explain the project layout, JavaScript file responsibilities, and major request flows.
