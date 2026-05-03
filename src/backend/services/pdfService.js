@@ -81,7 +81,8 @@ const createPdfBuffer = async (objResumeData) => {
   try {
     const objPage = await objBrowser.newPage();
     await objPage.setContent(strHtml, { waitUntil: "networkidle0" });
-    return await objPage.pdf({
+
+    const objPdfBytes = await objPage.pdf({
       format: "Letter",
       printBackground: true,
       margin: {
@@ -91,6 +92,11 @@ const createPdfBuffer = async (objResumeData) => {
         left: "0.5in"
       }
     });
+
+    // Puppeteer may return a Uint8Array depending on the installed version.
+    // Express sends Node Buffers as real binary files, so this conversion keeps
+    // the downloaded resume from becoming corrupted JSON-like byte data.
+    return Buffer.from(objPdfBytes);
   } finally {
     await objBrowser.close();
   }

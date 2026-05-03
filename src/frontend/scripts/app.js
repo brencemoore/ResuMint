@@ -364,7 +364,10 @@ const exportPdf = async () => {
   document.body.appendChild(objLink);
   objLink.click();
   objLink.remove();
-  URL.revokeObjectURL(strDownloadUrl);
+
+  // The download starts from a temporary browser URL. Waiting briefly before
+  // revoking it gives the browser time to begin reading the PDF bytes.
+  window.setTimeout(() => URL.revokeObjectURL(strDownloadUrl), 1000);
   setMessage("PDF exported.", "success");
 };
 
