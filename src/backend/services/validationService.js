@@ -19,6 +19,12 @@ const validateResumeData = (objResumeData) => {
         arrErrors.push(`Basics ${strFieldName} must be text.`);
       }
     });
+
+    ["github", "linkedin"].forEach((strFieldName) => {
+      if (objResumeData.basics[strFieldName] !== undefined && !isStringValue(objResumeData.basics[strFieldName])) {
+        arrErrors.push(`Basics ${strFieldName} must be text.`);
+      }
+    });
   }
 
   ["education", "experience", "projects", "skills", "certifications"].forEach((strArrayName) => {

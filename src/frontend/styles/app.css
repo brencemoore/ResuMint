@@ -53,3 +53,41 @@ textarea {
 .resume-preview h3 {
   font-size: 1rem;
 }
+
+.resume-preview-row {
+  align-items: baseline;
+  column-gap: 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 12rem);
+}
+
+.resume-preview-row h3 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.resume-preview-row p {
+  text-align: right;
+  white-space: normal;
+}
+
+.resume-preview-skills {
+  column-gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.resume-preview-skills li {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767.98px) {
+  .resume-preview-row,
+  .resume-preview-skills {
+    grid-template-columns: 1fr;
+  }
+
+  .resume-preview-row p {
+    text-align: left;
+  }
+}

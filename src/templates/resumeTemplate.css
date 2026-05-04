@@ -56,15 +56,31 @@ li {
 
 .resume-row {
   align-items: baseline;
-  display: flex;
-  gap: 16px;
-  justify-content: space-between;
+  column-gap: 0.35in;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.45in;
 }
 
-.resume-row p {
-  flex-shrink: 0;
+.resume-row h3 {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-.compact-list {
-  column-count: 2;
+.resume-date {
+  color: #374151;
+  text-align: right;
+  white-space: normal;
+  word-break: normal;
+}
+
+.skill-list {
+  column-gap: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style-position: outside;
+}
+
+.skill-list li {
+  break-inside: avoid;
+  overflow-wrap: anywhere;
 }

@@ -19,7 +19,9 @@ const objElements = {
   experienceContainer: document.getElementById("experienceContainer"),
   exportPdfButton: document.getElementById("exportPdfButton"),
   generateResumeButton: document.getElementById("generateResumeButton"),
+  githubInput: document.getElementById("githubInput"),
   jobTitleInput: document.getElementById("jobTitleInput"),
+  linkedinInput: document.getElementById("linkedinInput"),
   locationInput: document.getElementById("locationInput"),
   messageBox: document.getElementById("messageBox"),
   newResumeButton: document.getElementById("newResumeButton"),
@@ -44,7 +46,9 @@ const getEmptyResumeData = () => ({
     name: "",
     email: "",
     phone: "",
-    location: ""
+    location: "",
+    github: "",
+    linkedin: ""
   },
   education: [],
   experience: [],
@@ -82,6 +86,34 @@ const splitCommaList = (strValue) => strValue
   .split(",")
   .map((strItem) => strItem.trim())
   .filter((strItem) => strItem.length > 0);
+
+const hasText = (strValue) => String(strValue || "").trim().length > 0;
+
+const hasListItems = (arrItems) => Array.isArray(arrItems) && arrItems.some(hasText);
+
+const hasEducationContent = (objEducation) => (
+  hasText(objEducation.school) || hasText(objEducation.degree) || hasText(objEducation.start) || hasText(objEducation.end)
+);
+
+const hasExperienceContent = (objExperience) => (
+  hasText(objExperience.company)
+  || hasText(objExperience.role)
+  || hasText(objExperience.start)
+  || hasText(objExperience.end)
+  || hasListItems(objExperience.bullets || [])
+);
+
+const hasProjectContent = (objProject) => (
+  hasText(objProject.name) || hasText(objProject.description)
+);
+
+const renderDateRange = (strStart, strEnd) => {
+  if (hasText(strStart) && hasText(strEnd)) {
+    return `${escapeHtml(strStart)} - ${escapeHtml(strEnd)}`;
+  }
+
+  return escapeHtml(strStart || strEnd || "");
+};
 
 const addEducationItem = (objEducation = {}) => {
   objState.intEducationCount += 1;
@@ -187,6 +219,8 @@ const fillForm = (objResume = null) => {
   objElements.emailInput.value = objResumeData.basics.email || "";
   objElements.phoneInput.value = objResumeData.basics.phone || "";
   objElements.locationInput.value = objResumeData.basics.location || "";
+  objElements.githubInput.value = objResumeData.basics.github || "";
+  objElements.linkedinInput.value = objResumeData.basics.linkedin || "";
   objElements.skillsInput.value = (objResumeData.skills || []).join(", ");
   objElements.certificationsInput.value = (objResumeData.certifications || []).join(", ");
 
@@ -231,7 +265,9 @@ const collectResumeData = () => {
       name: objElements.basicNameInput.value.trim(),
       email: objElements.emailInput.value.trim(),
       phone: objElements.phoneInput.value.trim(),
-      location: objElements.locationInput.value.trim()
+      location: objElements.locationInput.value.trim(),
+      github: objElements.githubInput.value.trim(),
+      linkedin: objElements.linkedinInput.value.trim()
     },
     education: arrEducation,
     experience: arrExperience,
@@ -254,57 +290,64 @@ const renderPreviewList = (arrItems) => {
     .filter((strItem) => strItem.length > 0);
 
   if (arrFilteredItems.length === 0) {
-    return "<p class=\"text-secondary mb-0\">No entries yet.</p>";
+    return "";
   }
 
   return `<ul>${arrFilteredItems.map((strItem) => `<li>${escapeHtml(strItem)}</li>`).join("")}</ul>`;
 };
 
-const renderPreviewSection = (strHeading, strBodyHtml) => `
-  <section aria-label="${escapeAttribute(strHeading)}">
-    <h2>${escapeHtml(strHeading)}</h2>
-    ${strBodyHtml}
-  </section>
-`;
+const renderPreviewSection = (strHeading, strBodyHtml) => {
+  if (!hasText(strBodyHtml)) {
+    return "";
+  }
+
+  return `
+    <section aria-label="${escapeAttribute(strHeading)}">
+      <h2>${escapeHtml(strHeading)}</h2>
+      ${strBodyHtml}
+    </section>
+  `;
+};
 
 const renderResumePreview = (objResumeData) => {
   const strContact = [
     objResumeData.basics.email,
     objResumeData.basics.phone,
-    objResumeData.basics.location
+    objResumeData.basics.location,
+    objResumeData.basics.github,
+    objResumeData.basics.linkedin
   ].filter(Boolean).map(escapeHtml).join(" | ");
 
-  const strExperienceHtml = objResumeData.experience.length > 0
-    ? objResumeData.experience.map((objExperience) => `
-      <article class="mb-3">
-        <div class="d-flex flex-column flex-md-row justify-content-between gap-1">
+  const strExperienceHtml = objResumeData.experience.filter(hasExperienceContent).map((objExperience) => `
+      <article class="resume-preview-item mb-3">
+        <div class="resume-preview-row">
           <h3 class="mb-1">${escapeHtml(objExperience.role || "Role")}${objExperience.company ? `, ${escapeHtml(objExperience.company)}` : ""}</h3>
-          <p class="mb-1 text-secondary">${escapeHtml(objExperience.start)}${objExperience.end ? ` - ${escapeHtml(objExperience.end)}` : ""}</p>
+          <p class="mb-1 text-secondary">${renderDateRange(objExperience.start, objExperience.end)}</p>
         </div>
         ${renderPreviewList(objExperience.bullets || [])}
       </article>
-    `).join("")
-    : "<p class=\"text-secondary mb-0\">No experience entries yet.</p>";
+    `).join("");
 
-  const strEducationHtml = objResumeData.education.length > 0
-    ? objResumeData.education.map((objEducation) => `
-      <article class="mb-3">
-        <div class="d-flex flex-column flex-md-row justify-content-between gap-1">
+  const strEducationHtml = objResumeData.education.filter(hasEducationContent).map((objEducation) => `
+      <article class="resume-preview-item mb-3">
+        <div class="resume-preview-row">
           <h3 class="mb-1">${escapeHtml(objEducation.school || "School")}</h3>
-          <p class="mb-1 text-secondary">${escapeHtml(objEducation.start)}${objEducation.end ? ` - ${escapeHtml(objEducation.end)}` : ""}</p>
+          <p class="mb-1 text-secondary">${renderDateRange(objEducation.start, objEducation.end)}</p>
         </div>
         <p class="mb-0">${escapeHtml(objEducation.degree)}</p>
       </article>
-    `).join("")
-    : "<p class=\"text-secondary mb-0\">No education entries yet.</p>";
+    `).join("");
 
-  const strProjectsHtml = objResumeData.projects.length > 0
-    ? `<ul>${objResumeData.projects.map((objProject) => `
+  const strProjectsHtml = objResumeData.projects.filter(hasProjectContent).length > 0
+    ? `<ul>${objResumeData.projects.filter(hasProjectContent).map((objProject) => `
       <li>
         <strong>${escapeHtml(objProject.name || "Project")}</strong>${objProject.description ? ` - ${escapeHtml(objProject.description)}` : ""}
       </li>
     `).join("")}</ul>`
-    : "<p class=\"text-secondary mb-0\">No project entries yet.</p>";
+    : "";
+
+  const strSkillsHtml = renderPreviewList(objResumeData.skills).replace("<ul>", "<ul class=\"resume-preview-skills\">");
+  const strCertificationsHtml = renderPreviewList(objResumeData.certifications);
 
   objElements.resumePreviewContent.innerHTML = `
     <header class="text-center border-bottom pb-3 mb-3">
@@ -314,8 +357,8 @@ const renderResumePreview = (objResumeData) => {
     ${renderPreviewSection("Experience", strExperienceHtml)}
     ${renderPreviewSection("Education", strEducationHtml)}
     ${renderPreviewSection("Projects", strProjectsHtml)}
-    ${renderPreviewSection("Skills", renderPreviewList(objResumeData.skills))}
-    ${renderPreviewSection("Certifications", renderPreviewList(objResumeData.certifications))}
+    ${renderPreviewSection("Skills", strSkillsHtml)}
+    ${renderPreviewSection("Certifications", strCertificationsHtml)}
   `;
 };
 

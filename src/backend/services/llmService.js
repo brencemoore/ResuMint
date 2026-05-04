@@ -16,7 +16,14 @@ Rules:
 Return format:
 
 {
-"basics": {...},
+"basics": {
+  "name": "",
+  "email": "",
+  "phone": "",
+  "location": "",
+  "github": "",
+  "linkedin": ""
+},
 "experience": [...],
 "education": [...],
 "skills": [...],

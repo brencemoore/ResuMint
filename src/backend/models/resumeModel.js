@@ -3,7 +3,9 @@ const getEmptyResumeData = () => ({
     name: "",
     email: "",
     phone: "",
-    location: ""
+    location: "",
+    github: "",
+    linkedin: ""
   },
   education: [],
   experience: [],

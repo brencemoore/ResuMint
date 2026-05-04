@@ -60,7 +60,9 @@ Then open [http://localhost:3000](http://localhost:3000).
     "name": "",
     "email": "",
     "phone": "",
-    "location": ""
+    "location": "",
+    "github": "",
+    "linkedin": ""
   },
   "education": [],
   "experience": [],

@@ -220,7 +220,7 @@ Main responsibilities:
 
 - Reads the HTML and CSS resume template files.
 - Escapes user-provided text so it is safe to inject into HTML.
-- Renders education, experience, projects, skills, and certifications.
+- Renders non-empty education, experience, projects, skills, and certifications.
 - Uses Puppeteer to convert the generated HTML into a PDF.
 - Returns the PDF as a Node `Buffer` so Express sends it as a real binary file.
 
@@ -270,13 +270,15 @@ Most layout and color styling is done with Bootstrap utility classes in `index.h
 
 Defines the HTML structure used for exported PDF resumes.
 
-The placeholders such as `{{name}}`, `{{experience}}`, and `{{skills}}` are replaced by `pdfService.js`.
+The placeholders such as `{{name}}`, `{{contact}}`, and `{{sections}}` are replaced by `pdfService.js`.
 
 ### `src/templates/resumeTemplate.css`
 
 Defines the PDF resume styling.
 
 This CSS is separate from the main frontend CSS because the PDF layout has different needs than the web application UI.
+
+It also controls the spacing between the main resume content and the date column, plus the multi-column skills layout used when many skills are listed.
 
 ## Request Flow Examples
 
@@ -308,3 +310,5 @@ This CSS is separate from the main frontend CSS because the PDF layout has diffe
 5. Puppeteer renders the HTML into PDF bytes.
 6. `pdfService.js` converts the bytes into a Node `Buffer`.
 7. Express sends the PDF file to the browser for download.
+
+Empty sections are skipped during this process, so the PDF does not show headings for sections with no data.

@@ -364,6 +364,11 @@ There is something incorrect with exporting the resumes as a pdf. Can you reveri
 Add the icon located in the images folder to the top left of the header on the front end page. Also in server.js change the application to run with electron js as a application. If there is a way to add a preview of the resume from a button in the same area as "Save Resume", "Generate Resume", and Export PDF. Name this new button "Preview Resume" and change the "Generate Resume" button to say something short along the lines of AI Enhance or Enhance Resume. Also add code in the index.html file for me to input icons from bootstrap icons, but if you think you can find icons that are fitting for each button, add them yourself. When you finish all of this tell me which changes you made, and tell me if I need to still add icons to which parts.
 ```
 
+**Prompt 4:**
+```
+Have the resume output be structured more clearly and do no include sections in the pdf if they are empty. Skills are hard to read when there are a lot. Each sections has issues with text wrapping, so change it to where it will leave white space between the two "parts" of the resume between the content and dates. Also in the basic data add asection to add a github and linked in.
+```
+
 
 ## Codex Prompt Summaries
 
@@ -389,3 +394,11 @@ Add the icon located in the images folder to the top left of the header on the f
   - Added a `Preview Resume` button and accessible preview dialog that renders the current form data in a resume-style layout.
   - Refactored startup so the root `server.js` can launch the app as an Electron desktop application while still supporting browser-only local server mode.
   - Updated README and project structure documentation for the Electron and preview changes.
+
+
+**Prompt 4 Summary:**
+  - Added GitHub and LinkedIn fields to the Basics form and saved resume JSON.
+  - Updated validation and the Groq prompt shape so profile links can be included without breaking older saved resumes.
+  - Changed PDF rendering so empty sections are not included in exported resumes.
+  - Improved PDF and preview layout with a clearer content/date grid that leaves whitespace between the main content and date column.
+  - Changed skills rendering in both PDF and preview to a multi-column layout so long skill lists are easier to scan.
