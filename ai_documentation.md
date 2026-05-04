@@ -1,3 +1,7 @@
+## AI Usage Statement
+
+This document shows the entire usage of AI throughout the development of this project. Included are prompts that were used for asking ChatGPT on guidance and prompting for the development to start in codex. All prompts besides prompt #1 in Codex were hand written by Brence Moore. The AGENTS.md file was altered from the file we made in class in CSC 3100 about agentic coding. No AI was used in editing that file. 
+
 ## Prompts for Planning Stage
 
 The following prompts were used to find an alternative to using Gemini's API because I was never able to create an API token due to age verification, and none of the options could become resolved.
