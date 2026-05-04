@@ -2,6 +2,10 @@
 
 Resumint is a locally hosted resume builder built with Node.js, Express, SQLite, vanilla JavaScript, Bootstrap, Groq, and Puppeteer. It is structured so the backend can later be launched as a local process from an ElectronJS desktop app.
 
+Repo link: https://github.com/brencemoore/Resumint
+
+AI Usage is in `ai_documentation.md`.
+
 ## Setup
 
 1. Install Node.js with npm.
