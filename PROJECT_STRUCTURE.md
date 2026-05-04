@@ -6,9 +6,9 @@ This document explains how the Resumint project is organized and what the main f
 
 ### `server.js`
 
-This is the root Node.js entry point. It only imports `src/backend/server.js`.
+This is the root application entry point.
 
-Keeping this file small is useful because the assignment requires a `server.js` entry point, and a future Electron app can start the same backend without needing to know the full backend folder structure.
+When launched with Electron, it starts the local Express backend and opens a desktop `BrowserWindow` pointed at the local app URL. When launched with plain Node.js, it starts the same backend as a normal local web server.
 
 ### `package.json`
 
@@ -16,8 +16,9 @@ Defines the project metadata, npm scripts, and dependencies.
 
 Important scripts:
 
-- `npm start`: runs the local server.
-- `npm run dev`: currently does the same thing as start.
+- `npm start`: runs the Electron desktop app.
+- `npm run dev`: runs the Electron desktop app.
+- `npm run start:web`: runs the local Express server in a browser.
 
 Main dependencies:
 
@@ -26,6 +27,8 @@ Main dependencies:
 - `dotenv`: loads `.env` configuration.
 - `puppeteer`: renders resume HTML into PDF.
 - `bootstrap`: local frontend styling library.
+- `bootstrap-icons`: local icon font used for app buttons.
+- `electron`: desktop application shell.
 
 ### `.env`
 
@@ -71,10 +74,13 @@ Main responsibilities:
 - Initializes the SQLite database before accepting requests.
 - Serves the frontend from `src/frontend`.
 - Serves local Bootstrap files from `node_modules`.
+- Serves local Bootstrap Icons files from `node_modules`.
 - Mounts API routes under `/api`.
 - Handles 404 and unexpected server errors.
 
 This file should stay focused on app setup. Business logic belongs in services and controllers.
+
+This file exports `startServer()` so the root Electron launcher can start the backend before opening the desktop window.
 
 ### `src/backend/db/database.js`
 
@@ -246,6 +252,7 @@ Main responsibilities:
 - Saves resumes through the backend API.
 - Loads, searches, and deletes saved resumes.
 - Sends resume data to Groq through `/api/generate`.
+- Builds and opens the in-app resume preview dialog.
 - Requests PDF export through `/api/export/pdf`.
 - Updates visible status messages for accessibility.
 

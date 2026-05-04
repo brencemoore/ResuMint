@@ -359,6 +359,12 @@ Ensure each step builds on the previous one and results in a working application
 There is something incorrect with exporting the resumes as a pdf. Can you reverify that this works, or show me the file that needs to be changed. Also create a new .md file in the root directory that explains the structure of the project, and what each file does, mainly the .js files so that I can maintain this on my own.
 ```
 
+**Prompt 3:**
+```
+Add the icon located in the images folder to the top left of the header on the front end page. Also in server.js change the application to run with electron js as a application. If there is a way to add a preview of the resume from a button in the same area as "Save Resume", "Generate Resume", and Export PDF. Name this new button "Preview Resume" and change the "Generate Resume" button to say something short along the lines of AI Enhance or Enhance Resume. Also add code in the index.html file for me to input icons from bootstrap icons, but if you think you can find icons that are fitting for each button, add them yourself. When you finish all of this tell me which changes you made, and tell me if I need to still add icons to which parts.
+```
+
+
 ## Codex Prompt Summaries
 
 **Prompt 1 Summary:**
@@ -374,3 +380,12 @@ There is something incorrect with exporting the resumes as a pdf. Can you reveri
   - Reviewed the PDF export flow and fixed the likely binary response problem by converting Puppeteer's PDF bytes to a Node `Buffer` in `src/backend/services/pdfService.js`.
   - Updated the frontend PDF download cleanup in `src/frontend/scripts/app.js` so the temporary browser URL is revoked after the download has time to start.
   - Added `PROJECT_STRUCTURE.md` in the root directory to explain the project layout, JavaScript file responsibilities, and major request flows.
+
+
+**Prompt 3 Summary:**
+  - Added the Resumint app icon from `src/frontend/images` to the top-left header area.
+  - Added Bootstrap Icons support through locally served files and selected icons for the main action buttons, sidebar actions, add buttons, delete buttons, and preview close button.
+  - Changed the main action button text from `Generate Resume` to `AI Enhance`.
+  - Added a `Preview Resume` button and accessible preview dialog that renders the current form data in a resume-style layout.
+  - Refactored startup so the root `server.js` can launch the app as an Electron desktop application while still supporting browser-only local server mode.
+  - Updated README and project structure documentation for the Electron and preview changes.

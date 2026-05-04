@@ -13,6 +13,7 @@ const intPort = Number.parseInt(process.env.PORT || "3000", 10);
 const strProjectRoot = path.resolve(__dirname, "../..");
 const strFrontendPath = path.join(strProjectRoot, "src", "frontend");
 const strBootstrapPath = path.join(strProjectRoot, "node_modules", "bootstrap", "dist");
+const strBootstrapIconsPath = path.join(strProjectRoot, "node_modules", "bootstrap-icons", "font");
 
 // Express receives JSON from the browser forms and converts it into JavaScript objects.
 // The size limit keeps accidental huge requests from consuming too much local memory.
@@ -20,6 +21,7 @@ objApp.use(express.json({ limit: "1mb" }));
 
 // Bootstrap is served from local node_modules so the app works without any CDN access.
 objApp.use("/vendor/bootstrap", express.static(strBootstrapPath));
+objApp.use("/vendor/bootstrap-icons", express.static(strBootstrapIconsPath));
 objApp.use(express.static(strFrontendPath));
 
 // All application APIs live under /api to keep browser pages and backend routes separated.
@@ -43,12 +45,27 @@ objApp.use((objError, objRequest, objResponse, objNext) => {
 const startServer = async () => {
   await initializeDatabase();
 
-  objApp.listen(intPort, () => {
-    console.log(`Resumint is running at http://localhost:${intPort}`);
+  return new Promise((resolve) => {
+    const objServer = objApp.listen(intPort, () => {
+      const intActivePort = objServer.address().port;
+
+      console.log(`Resumint is running at http://localhost:${intActivePort}`);
+      resolve({
+        intPort: intActivePort,
+        objServer
+      });
+    });
   });
 };
 
-startServer().catch((objError) => {
-  console.error("Failed to start Resumint.", objError);
-  process.exit(1);
-});
+if (require.main === module) {
+  startServer().catch((objError) => {
+    console.error("Failed to start Resumint.", objError);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  objApp,
+  startServer
+};

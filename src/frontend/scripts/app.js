@@ -24,7 +24,11 @@ const objElements = {
   messageBox: document.getElementById("messageBox"),
   newResumeButton: document.getElementById("newResumeButton"),
   phoneInput: document.getElementById("phoneInput"),
+  closePreviewButton: document.getElementById("closePreviewButton"),
+  previewDialog: document.getElementById("previewDialog"),
+  previewResumeButton: document.getElementById("previewResumeButton"),
   projectsContainer: document.getElementById("projectsContainer"),
+  resumePreviewContent: document.getElementById("resumePreviewContent"),
   resumeForm: document.getElementById("resumeForm"),
   resumeList: document.getElementById("resumeList"),
   resumeListStatus: document.getElementById("resumeListStatus"),
@@ -67,6 +71,13 @@ const escapeAttribute = (strValue = "") => String(strValue)
   .replace(/</g, "&lt;")
   .replace(/>/g, "&gt;");
 
+const escapeHtml = (strValue = "") => String(strValue)
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;")
+  .replace(/'/g, "&#039;");
+
 const splitCommaList = (strValue) => strValue
   .split(",")
   .map((strItem) => strItem.trim())
@@ -87,7 +98,10 @@ const addEducationItem = (objEducation = {}) => {
       ${createFormInput(`educationStart${intIndex}`, "Start date", objEducation.start || "")}
       ${createFormInput(`educationEnd${intIndex}`, "End date", objEducation.end || "")}
       <div class="col-12">
-        <button class="btn btn-outline-danger btn-sm" type="button" data-remove-item="true">Remove Education</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-remove-item="true">
+          <i class="bi bi-trash" aria-hidden="true"></i>
+          <span>Remove Education</span>
+        </button>
       </div>
     </div>
   `;
@@ -114,7 +128,10 @@ const addExperienceItem = (objExperience = {}) => {
         <textarea class="form-control" id="experienceBullets${intIndex}" name="experienceBullets${intIndex}" rows="5" aria-label="Experience bullet points">${escapeAttribute((objExperience.bullets || []).join("\n"))}</textarea>
       </div>
       <div class="col-12">
-        <button class="btn btn-outline-danger btn-sm" type="button" data-remove-item="true">Remove Experience</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-remove-item="true">
+          <i class="bi bi-trash" aria-hidden="true"></i>
+          <span>Remove Experience</span>
+        </button>
       </div>
     </div>
   `;
@@ -139,7 +156,10 @@ const addProjectItem = (objProject = {}) => {
         <textarea class="form-control" id="projectDescription${intIndex}" name="projectDescription${intIndex}" rows="4" aria-label="Project description">${escapeAttribute(objProjectData.description || "")}</textarea>
       </div>
       <div class="col-12">
-        <button class="btn btn-outline-danger btn-sm" type="button" data-remove-item="true">Remove Project</button>
+        <button class="btn btn-outline-danger btn-sm" type="button" data-remove-item="true">
+          <i class="bi bi-trash" aria-hidden="true"></i>
+          <span>Remove Project</span>
+        </button>
       </div>
     </div>
   `;
@@ -228,6 +248,83 @@ const collectResumePayload = () => ({
   resumeData: collectResumeData()
 });
 
+const renderPreviewList = (arrItems) => {
+  const arrFilteredItems = arrItems
+    .map((strItem) => String(strItem).trim())
+    .filter((strItem) => strItem.length > 0);
+
+  if (arrFilteredItems.length === 0) {
+    return "<p class=\"text-secondary mb-0\">No entries yet.</p>";
+  }
+
+  return `<ul>${arrFilteredItems.map((strItem) => `<li>${escapeHtml(strItem)}</li>`).join("")}</ul>`;
+};
+
+const renderPreviewSection = (strHeading, strBodyHtml) => `
+  <section aria-label="${escapeAttribute(strHeading)}">
+    <h2>${escapeHtml(strHeading)}</h2>
+    ${strBodyHtml}
+  </section>
+`;
+
+const renderResumePreview = (objResumeData) => {
+  const strContact = [
+    objResumeData.basics.email,
+    objResumeData.basics.phone,
+    objResumeData.basics.location
+  ].filter(Boolean).map(escapeHtml).join(" | ");
+
+  const strExperienceHtml = objResumeData.experience.length > 0
+    ? objResumeData.experience.map((objExperience) => `
+      <article class="mb-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-1">
+          <h3 class="mb-1">${escapeHtml(objExperience.role || "Role")}${objExperience.company ? `, ${escapeHtml(objExperience.company)}` : ""}</h3>
+          <p class="mb-1 text-secondary">${escapeHtml(objExperience.start)}${objExperience.end ? ` - ${escapeHtml(objExperience.end)}` : ""}</p>
+        </div>
+        ${renderPreviewList(objExperience.bullets || [])}
+      </article>
+    `).join("")
+    : "<p class=\"text-secondary mb-0\">No experience entries yet.</p>";
+
+  const strEducationHtml = objResumeData.education.length > 0
+    ? objResumeData.education.map((objEducation) => `
+      <article class="mb-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-1">
+          <h3 class="mb-1">${escapeHtml(objEducation.school || "School")}</h3>
+          <p class="mb-1 text-secondary">${escapeHtml(objEducation.start)}${objEducation.end ? ` - ${escapeHtml(objEducation.end)}` : ""}</p>
+        </div>
+        <p class="mb-0">${escapeHtml(objEducation.degree)}</p>
+      </article>
+    `).join("")
+    : "<p class=\"text-secondary mb-0\">No education entries yet.</p>";
+
+  const strProjectsHtml = objResumeData.projects.length > 0
+    ? `<ul>${objResumeData.projects.map((objProject) => `
+      <li>
+        <strong>${escapeHtml(objProject.name || "Project")}</strong>${objProject.description ? ` - ${escapeHtml(objProject.description)}` : ""}
+      </li>
+    `).join("")}</ul>`
+    : "<p class=\"text-secondary mb-0\">No project entries yet.</p>";
+
+  objElements.resumePreviewContent.innerHTML = `
+    <header class="text-center border-bottom pb-3 mb-3">
+      <h1 class="mb-1">${escapeHtml(objResumeData.basics.name || "Your Name")}</h1>
+      <p class="mb-0 text-secondary">${strContact || "Contact information will appear here."}</p>
+    </header>
+    ${renderPreviewSection("Experience", strExperienceHtml)}
+    ${renderPreviewSection("Education", strEducationHtml)}
+    ${renderPreviewSection("Projects", strProjectsHtml)}
+    ${renderPreviewSection("Skills", renderPreviewList(objResumeData.skills))}
+    ${renderPreviewSection("Certifications", renderPreviewList(objResumeData.certifications))}
+  `;
+};
+
+const previewResume = () => {
+  renderResumePreview(collectResumeData());
+  objElements.previewDialog.showModal();
+  setMessage("Resume preview opened.", "secondary");
+};
+
 const renderResumeList = () => {
   objElements.resumeList.innerHTML = "";
   objElements.resumeListStatus.textContent = `${objState.arrResumes.length} resume${objState.arrResumes.length === 1 ? "" : "s"} found.`;
@@ -241,7 +338,10 @@ const renderResumeList = () => {
           <span class="fw-semibold d-block">${escapeAttribute(objResume.name)}</span>
           <span class="small d-block">${escapeAttribute(objResume.jobTitle || "No target role")}</span>
         </button>
-        <button class="btn btn-sm ${objResume.id === objState.intCurrentResumeId ? "btn-light" : "btn-outline-danger"}" type="button" data-delete-resume-id="${objResume.id}" aria-label="Delete ${escapeAttribute(objResume.name)}">Delete</button>
+        <button class="btn btn-sm ${objResume.id === objState.intCurrentResumeId ? "btn-light" : "btn-outline-danger"}" type="button" data-delete-resume-id="${objResume.id}" aria-label="Delete ${escapeAttribute(objResume.name)}">
+          <i class="bi bi-trash" aria-hidden="true"></i>
+          <span>Delete</span>
+        </button>
       </div>
     `;
     objElements.resumeList.appendChild(objItem);
@@ -419,8 +519,13 @@ objElements.newResumeButton.addEventListener("click", () => {
   setMessage("New resume started.", "secondary");
 });
 objElements.saveResumeButton.addEventListener("click", () => handleAsyncAction(saveResume));
+objElements.previewResumeButton.addEventListener("click", previewResume);
 objElements.generateResumeButton.addEventListener("click", () => handleAsyncAction(generateResume));
 objElements.exportPdfButton.addEventListener("click", () => handleAsyncAction(exportPdf));
+objElements.closePreviewButton.addEventListener("click", () => {
+  objElements.previewDialog.close();
+  setMessage("Resume preview closed.", "secondary");
+});
 objElements.searchForm.addEventListener("submit", (objEvent) => {
   objEvent.preventDefault();
   handleAsyncAction(loadResumeList);

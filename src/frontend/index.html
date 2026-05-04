@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Resumint</title>
   <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.css">
   <link rel="stylesheet" href="/styles/app.css">
 
   <!-- Resumint and App Icons -->
@@ -19,9 +20,12 @@
   <a class="visually-hidden-focusable position-absolute top-0 start-0 bg-white text-dark p-3" href="#mainContent">Skip to resume editor</a>
 
   <header class="bg-white border-bottom">
-    <div class="container-fluid py-3">
-      <h1 class="h3 mb-1">Resumint</h1>
-      <p class="mb-0 text-secondary">Local resume builder with structured editing, Groq polishing, and PDF export.</p>
+    <div class="container-fluid py-3 d-flex align-items-center gap-3">
+      <img class="app-logo flex-shrink-0" src="images/android-chrome-192x192.png" alt="Resumint logo">
+      <div>
+        <h1 class="h3 mb-1">Resumint</h1>
+        <p class="mb-0 text-secondary">Local resume builder with structured editing, Groq polishing, and PDF export.</p>
+      </div>
     </div>
   </header>
 
@@ -31,14 +35,20 @@
         <section class="bg-white border rounded p-3">
           <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
             <h2 class="h5 mb-0">Saved Resumes</h2>
-            <button class="btn btn-sm btn-outline-primary" type="button" id="newResumeButton">New</button>
+            <button class="btn btn-sm btn-outline-primary" type="button" id="newResumeButton">
+              <i class="bi bi-plus-lg" aria-hidden="true"></i>
+              <span>New</span>
+            </button>
           </div>
 
           <form id="searchForm" class="mb-3" role="search">
             <label class="form-label" for="searchInput">Search resumes</label>
             <div class="input-group">
               <input class="form-control" id="searchInput" name="searchInput" type="search" aria-label="Search resumes by name">
-              <button class="btn btn-outline-secondary" type="submit">Search</button>
+              <button class="btn btn-outline-secondary" type="submit">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <span>Search</span>
+              </button>
             </div>
           </form>
 
@@ -55,9 +65,22 @@
               <p class="mb-0 text-secondary" id="currentResumeStatus" role="status" aria-live="polite">Creating a new resume.</p>
             </div>
             <div class="d-flex flex-wrap gap-2">
-              <button class="btn btn-primary" type="button" id="saveResumeButton">Save Resume</button>
-              <button class="btn btn-success" type="button" id="generateResumeButton">Generate Resume</button>
-              <button class="btn btn-outline-dark" type="button" id="exportPdfButton">Export PDF</button>
+              <button class="btn btn-primary" type="button" id="saveResumeButton">
+                <i class="bi bi-save" aria-hidden="true"></i>
+                <span>Save Resume</span>
+              </button>
+              <button class="btn btn-outline-primary" type="button" id="previewResumeButton">
+                <i class="bi bi-eye" aria-hidden="true"></i>
+                <span>Preview Resume</span>
+              </button>
+              <button class="btn btn-success" type="button" id="generateResumeButton">
+                <i class="bi bi-stars" aria-hidden="true"></i>
+                <span>AI Enhance</span>
+              </button>
+              <button class="btn btn-outline-dark" type="button" id="exportPdfButton">
+                <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
+                <span>Export PDF</span>
+              </button>
             </div>
           </div>
 
@@ -126,7 +149,10 @@
               <section class="d-none" id="educationPanel" role="tabpanel" aria-labelledby="educationTab" hidden>
                 <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
                   <h3 class="h5 mb-0">Education</h3>
-                  <button class="btn btn-outline-primary btn-sm" type="button" id="addEducationButton">Add Education</button>
+                  <button class="btn btn-outline-primary btn-sm" type="button" id="addEducationButton">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                    <span>Add Education</span>
+                  </button>
                 </div>
                 <div id="educationContainer"></div>
               </section>
@@ -134,7 +160,10 @@
               <section class="d-none" id="experiencePanel" role="tabpanel" aria-labelledby="experienceTab" hidden>
                 <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
                   <h3 class="h5 mb-0">Experience</h3>
-                  <button class="btn btn-outline-primary btn-sm" type="button" id="addExperienceButton">Add Experience</button>
+                  <button class="btn btn-outline-primary btn-sm" type="button" id="addExperienceButton">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                    <span>Add Experience</span>
+                  </button>
                 </div>
                 <div id="experienceContainer"></div>
               </section>
@@ -142,7 +171,10 @@
               <section class="d-none" id="projectsPanel" role="tabpanel" aria-labelledby="projectsTab" hidden>
                 <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
                   <h3 class="h5 mb-0">Projects</h3>
-                  <button class="btn btn-outline-primary btn-sm" type="button" id="addProjectButton">Add Project</button>
+                  <button class="btn btn-outline-primary btn-sm" type="button" id="addProjectButton">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                    <span>Add Project</span>
+                  </button>
                 </div>
                 <div id="projectsContainer"></div>
               </section>
@@ -173,6 +205,21 @@
       </main>
     </div>
   </div>
+
+  <dialog class="preview-dialog border rounded p-0" id="previewDialog" aria-labelledby="previewDialogTitle">
+    <div class="bg-white">
+      <div class="d-flex align-items-center justify-content-between gap-3 border-bottom p-3">
+        <h2 class="h5 mb-0" id="previewDialogTitle">Resume Preview</h2>
+        <button class="btn btn-outline-secondary btn-sm" type="button" id="closePreviewButton" aria-label="Close resume preview">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+          <span>Close</span>
+        </button>
+      </div>
+      <div class="p-3 p-md-4">
+        <article class="resume-preview border rounded bg-white mx-auto p-4" id="resumePreviewContent" aria-label="Current resume preview"></article>
+      </div>
+    </div>
+  </dialog>
 
   <script src="/scripts/app.js"></script>
 </body>

@@ -23,13 +23,22 @@ GROQ_API_KEY=your_key_here
 npm start
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000).
+5. The Electron desktop app opens automatically.
+
+For browser-only development, run:
+
+```bash
+npm run start:web
+```
+
+Then open [http://localhost:3000](http://localhost:3000).
 
 ## Features
 
 - Create, edit, save, load, search, and delete multiple resumes.
 - Store resume metadata and structured JSON locally in `data/resumes.db`.
 - Generate polished resume JSON through the Groq OpenAI-compatible API.
+- Preview the current resume directly in the app before exporting.
 - Export the current structured resume as a local PDF using Puppeteer.
 - Use semantic HTML, labeled controls, ARIA live regions, keyboard-friendly tabs, and high-contrast Bootstrap styling.
 
@@ -63,7 +72,8 @@ npm start
 
 ## Electron Migration Notes
 
-- The root `server.js` is the launch entry point.
+- The root `server.js` is the Electron-aware launch entry point.
+- `npm start` runs the Electron app, while `npm run start:web` runs the browser-only local server.
 - No absolute project paths are required at runtime; paths are resolved from module locations.
 - Frontend files are served from `src/frontend` and can later be loaded in a `BrowserWindow`.
 - Data remains local in the `data` directory.
